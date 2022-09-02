@@ -113,7 +113,7 @@ def graph_csv_area_ratio(file_name, core_num, round_factor, plot_all, target_str
 def graph_csv_area(file_name, core_num, round_factor, plot_all, target_str, ax):
     ax.legend(loc="upper left")
     df = parse_data(file_name[0], core_num, round_factor, plot_all, target_str)
-    df.plot(use_index=True, kind='area', linewidth=0, ax=ax)
+    df.plot(use_index=True, kind='area', linewidth=0, ax=ax, ylim=(0, 1.2*(10**8)))
     ax.set_ylabel('cycle')
     #df.plot(kind='area', linewidth=0, ylim=(0, 4*(10**8)), ax=ax)
     #df.plot(kind='area', linewidth=0, ylim=(0, 3*(10**8)))
@@ -148,9 +148,9 @@ def graph_lats(file_name, ax, offset_t):
     df.plot(use_index=True, y=['sojourn_t'], kind='line', ax=ax, color='r')
 
 def graph_kswapd_mem(file_name, ax):
-
     ax.set_ylabel("Resident Set(MiB)")
     df = pd.read_csv(file_name, usecols=kswapd_col)
+
     ts_min = df['ts'].min()
     df['time'] =  df['ts'].apply(lambda x : x - ts_min)
     df = df.set_index('time')
@@ -160,8 +160,8 @@ def graph_kswapd_mem(file_name, ax):
     df.plot(use_index=True, y=['stat_stime'], kind='line', ax=ax, color='g')
     
 def graph_ycsb_lats(file_name, ax, offset_t):
-    ax.set_ylabel("Latency (us)")
     df = pd.read_csv(file_name, names=['op', 'ts', 'lats'])
+
     df['time'] =  df['ts'].apply(lambda x : x / 1000)
     ts_min = df['time'].min()
     ts_min -= offset_t
@@ -171,8 +171,8 @@ def graph_ycsb_lats(file_name, ax, offset_t):
     df = df.set_index('time')
 
     print(df.index.inferred_type)
-    df.plot(x='ts', y=['lats'], kind='scatter', ax=ax, color='r', style='o', s=0.5)
-    pass
+    df.plot(x='ts', y=['lats'], kind='scatter', ax=ax, color='r', style='o', s=0.5, ylim=(0, 30000))
+    ax.set_ylabel("Latency (us)")
 
 def parse_job(file_name):
     df = pd.read_csv(file_name, usecols=columns)

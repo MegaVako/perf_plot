@@ -4,12 +4,12 @@ from plot_perf import *
 
 PLOT_ZSWAP = False
 PLOT_LATS = False
-PLOT_CACHE = True
-PLOT_CYCLE = False
+PLOT_CACHE = False
+PLOT_CYCLE = True
 PLOT_KSWAP = False
 PLOT_YCSB = True
 
-plot_resolution = 0 # digit
+plot_resolution = 1 # digit
 #time_str = "14_36_36" # time sample in hpca_perf/data/
 #time_str = "11_03_41" # l2
 time_str = "08_10_13" # llc
@@ -52,8 +52,8 @@ elif PLOT_CYCLE:
     parse_files = [
         "../data/{0}/{0}_perf_cycles_perf.csv".format(time_str),
     ]
-    parse_job(parse_files[0])
-    graph_csv_area(parse_files, core_num, plot_resolution, plot_all=2, target_str="kswap", ax=ax)
+    #parse_job(parse_files[0])
+    graph_csv_area(parse_files, core_num, plot_resolution, plot_all=0, target_str="kswap", ax=ax)
 
 # 14.9 is a manual shift added to the lat plot
 if PLOT_LATS:
@@ -67,7 +67,10 @@ if PLOT_KSWAP:
     graph_kswapd_mem("../data/{0}/{0}_kswapd_mem.csv".format(time_str), ax)
 
 if PLOT_YCSB:
-    graph_ycsb_lats("../data/{0}/{0}_ycsb_lat.csv".format(time_str), ax2, 9)
+    if core_num == 14:
+        graph_ycsb_lats("../data/{0}/{0}_ycsb_lat_cz.csv".format(time_str), ax2, 49.55)
+    else:
+        graph_ycsb_lats("../data/{0}/{0}_ycsb_lat_cnz.csv".format(time_str), ax2, 49.85)
 
 ax.legend(loc='upper left')
 ax2.legend(loc='upper right')
