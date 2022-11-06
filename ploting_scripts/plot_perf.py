@@ -4,7 +4,7 @@ import numpy as np
 
 plt.rcParams["figure.figsize"] = [15.00, 7.00]
 plt.rcParams["figure.autolayout"] = True
-columns = ["time", "count", 'process', 'cpu', 'job']
+columns = ["time", "count", 'process', 'cpu', 'job', 'pid']
 zswap_col = ['failed_stores','invalidates','loads','succ_stores','duplicate_entry','pool_limit_hit','pool_total_size','reject_alloc_fail','reject_compress_poor','reject_kmemcache_fail','reject_reclaim_fail','same_filled_pages','stored_pages','written_back_pages','mem_total','mem_used','mem_free','mem_shared','mem_buff/cache','mem_available','swap_total','swap_used','swap_free']
 kswapd_col = ['record_id','ts','cmdline','stat_pid','stat_comm','stat_state','stat_ppid','stat_pgrp','stat_session','stat_tty_nr','stat_tpgid','stat_flags','stat_minflt','stat_cminflt','stat_majflt','stat_cmajflt','stat_utime','stat_stime','stat_cutime','stat_cstime','stat_priority','stat_nice','stat_num_threads','stat_itrealvalue','stat_starttime','stat_vsize','stat_rss']
 
@@ -15,7 +15,7 @@ def graph_group(group_df, group_name, color):
 
 def graph_csv(file_name):
     df = pd.read_csv(file_name, usecols=columns)
-    grouped = (df.groupby(['cpu', 'process']))
+    grouped = (df.groupby(['cpu', 'pid']))
 
     arr = []
     for core, proc in grouped.groups:
@@ -52,13 +52,13 @@ def parse_data(file_name, core_num, round_factor, plot_all, target_str):
             df = grouped.get_group(core)
             break
 
-    grouped = df.groupby(['time', 'process'])
+    grouped = df.groupby(['time', 'pid'])
 
     df = pd.DataFrame([{'time': pair[0],
                         'e_count': v.e_count.sum(),
-                        'process': pair[1]} 
+                        'pid': pair[1]} 
                         for pair, v in grouped], 
-                        columns=['time', 'e_count', 'process'])
+                        columns=['time', 'e_count', 'pid'])
 
     cnt = 0
     t_min = 0
@@ -68,7 +68,7 @@ def parse_data(file_name, core_num, round_factor, plot_all, target_str):
     new_index = np.round(new_index, round_factor)
     df2 = pd.DataFrame(index=new_index)
 
-    for proc, v in df.groupby(['process']):
+    for proc, v in df.groupby(['pid']):
         if plot_all == 0: # ksm only
             if not (target_str in proc or 
                     "KVM" in proc):

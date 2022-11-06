@@ -21,6 +21,7 @@ for idx, row in enumerate(input_f.readlines()):
         time = float(row_arr[-6][:-1])
         tag = row_arr[-4][:-1]
         process = row_arr[-9]
+        pid = row_arr[-8]
         count = int(row_arr[-5])
         cpu = int(row_arr[-7][1:-1])
         job = row_arr[-2]
@@ -28,7 +29,7 @@ for idx, row in enumerate(input_f.readlines()):
         if tag not in data_arr_dict:
             data_arr_dict[tag] = []
 
-        data_arr_dict[tag].append((time, count, process, cpu, job))
+        data_arr_dict[tag].append((time, count, process, cpu, job, pid))
     except Exception as e:
         print(e)
         print(row.strip().split())
@@ -36,7 +37,7 @@ for idx, row in enumerate(input_f.readlines()):
 for k, v in data_arr_dict.items():
     out_f = open(OUTPUT_FILE.format(input_name, k), 'w+')
     writer = csv.writer(out_f)
-    writer.writerow(["time", "count", 'process', 'cpu', 'job'])
+    writer.writerow(["time", "count", 'process', 'cpu', 'job', 'pid'])
 
     for time, cnt, process, cpu, job in v:
         writer.writerow([time, cnt, process, cpu, job])
